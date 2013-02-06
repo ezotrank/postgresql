@@ -23,8 +23,12 @@ if(node['postgresql']['enable_pitti_ppa'])
   include_recipe 'postgresql::ppa_pitti_postgresql'
 end
 
-node['postgresql']['client']['packages'].each do |pg_pack|
-
-  package pg_pack
-
+case node['platform_family']
+when "rhel"
+  include_recipe "postgresql::pgdg"
+  node['postgresql']['client']['packages'].each do |pg_pack|
+    package pg_pack
+  end
 end
+
+
