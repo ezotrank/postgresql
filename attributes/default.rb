@@ -126,7 +126,6 @@ else
   default['postgresql']['server']['service_name'] = "postgresql"
 end
 
-default[:postgresql][:shared_buffers] = "32MB"
 # These defaults have disparity between which postgresql configuration
 # settings are used because they were extracted from the original
 # configuration files that are now removed in favor of dynamic
