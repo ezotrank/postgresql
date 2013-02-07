@@ -1,10 +1,8 @@
 #
-# Cookbook Name:: postgresql
-# Recipe:: client
+# Cookbook Name:: postgresql_test
+# Recipe:: yum_pgdg_postgresql
 #
-# Author:: Joshua Timberman (<joshua@opscode.com>)
-# Author:: Lamont Granquist (<lamont@opscode.com>)
-# Copyright 2009-2011 Opscode, Inc.
+# Copyright 2013, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,16 +17,8 @@
 # limitations under the License.
 #
 
-if(node['postgresql']['enable_pitti_ppa'])
-  include_recipe 'postgresql::ppa_pitti_postgresql'
-end
+node.set['postgresql']['enable_pgdg_yum'] = true
+node.set['postgresql']['version'] = '9.2'
+node.set['postgresql']['client']['packages'] = %w{postgresql92}
 
-if(node['postgresql']['enable_pgdg_yum'])
-  include_recipe 'postgresql::yum_pgdg_postgresql'
-end
-
-node['postgresql']['client']['packages'].each do |pg_pack|
-
-  package pg_pack
-
-end
+include_recipe "postgresql::default"

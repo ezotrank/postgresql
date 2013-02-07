@@ -18,7 +18,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-include_recipe "postgresql::pgdg"
+
 include_recipe "postgresql::client"
 
 # Create a group and user like the package will.
@@ -38,38 +38,18 @@ user "postgres" do
   supports :manage_home => false
 end
 
-case node['platform_family']
-when "rhel"
-  package "postgresql#{node['postgresql']['version'].split('.').join}-server"
-when "fedora", "suse"
-  package "postgresql-server"
-end
-
-rpm_package = case node['kernel']['machine']
-              when 'x86_64'
-                "http://yum.postgresql.org/9.1/redhat/rhel-6-x86_64/pgdg-centos91-9.1-4.noarch.rpm"
-              else
-                "http://yum.postgresql.org/9.1/redhat/rhel-6-x86_64/pgdg-centos91-9.1-4.noarch.rpm"
-              end
-execute "rpm -U #{rpm_package}" do
-  not_if { ::FileTest.exist? ("/etc/yum.repos.d/pgdg-#{node['postgresql']['version'].split('.').join}-centos.repo") }
-end
-
 node['postgresql']['server']['packages'].each do |pg_pack|
+
   package pg_pack
+
 end
 
-execute "/sbin/service #{node['postgresql']['server']['service_name']}-9.1 initdb" do
+execute "/sbin/service #{node['postgresql']['server']['service_name']} initdb" do
   not_if { ::FileTest.exist?(File.join(node['postgresql']['dir'], "PG_VERSION")) }
 end
 
-link "/usr/sbin/pg_config" do
-  to "/usr/pgsql-9.1/bin/pg_config"
-end
-
 service "postgresql" do
-  service_name "#{node['postgresql']['server']['service_name']}-9.1"
+  service_name node['postgresql']['server']['service_name']
   supports :restart => true, :status => true, :reload => true
   action [:enable, :start]
 end
-
