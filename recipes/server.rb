@@ -51,6 +51,32 @@ when "debian"
   include_recipe "postgresql::server_debian"
 end
 
+unless ::File.exist?(node['postgresql']['config']['data_directory'])
+  directory node['postgresql']['config']['data_directory'] do
+    owner "postgres"
+    group "postgres"
+    mode 00700
+    action :create
+    recursive true
+    notifies :stop, 'service[postgresql]', :immediately
+  end
+
+  bash "copy pg data" do
+    user 'root'
+    code <<-EOH
+      cp -rf /var/lib/postgresql/9.1/main/* #{node['postgresql']['config']['data_directory']} && \
+      chown -R postgres:postgres #{node['postgresql']['config']['data_directory']}
+    EOH
+  end
+
+  template "#{node['postgresql']['dir']}/postgresql.conf" do
+    source "postgresql.conf.erb"
+    owner "postgres"
+    group "postgres"
+    mode 0600
+  end
+end
+
 template "#{node['postgresql']['dir']}/postgresql.conf" do
   source "postgresql.conf.erb"
   owner "postgres"
