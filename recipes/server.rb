@@ -51,7 +51,7 @@ when "debian"
   include_recipe "postgresql::server_debian"
 end
 
-unless ::File.exist?(node['postgresql']['config']['data_directory'])
+if node['postgresql']['config']['data_directory'] && ! (::File.exist?(node['postgresql']['config']['data_directory']))
   directory node['postgresql']['config']['data_directory'] do
     owner "postgres"
     group "postgres"
