@@ -17,6 +17,8 @@
 # limitations under the License.
 #
 
+default['postgresql']['monitoring'] = nil
+
 case node['platform']
 when "debian"
 

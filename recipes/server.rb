@@ -57,8 +57,6 @@ when "debian"
   include_recipe "postgresql::server_debian"
 end
 
-include_recipe("postgresql::move_db")
-
 template "#{node['postgresql']['dir']}/postgresql.conf" do
   source "postgresql.conf.erb"
   owner "postgres"
@@ -73,6 +71,14 @@ template "#{node['postgresql']['dir']}/pg_hba.conf" do
   group "postgres"
   mode 00600
   notifies :reload, 'service[postgresql]', :immediately
+end
+
+case node['postgresql']['monitoring']
+when 'monit'
+  include_recipe 'monit'
+  monitrc 'monit_postgresql' do
+    template_cookbook 'postgresql'
+  end
 end
 
 # NOTE: Consider two facts before modifying "assign-postgres-password":
