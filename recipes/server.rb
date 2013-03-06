@@ -57,6 +57,8 @@ when "debian"
   include_recipe "postgresql::server_debian"
 end
 
+include_recipe("postgresql::move_db") if node['postgresql']['move_db']
+
 template "#{node['postgresql']['dir']}/postgresql.conf" do
   source "postgresql.conf.erb"
   owner "postgres"
