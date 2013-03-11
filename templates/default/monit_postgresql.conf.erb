@@ -1,7 +1,6 @@
 check process postgresql with pidfile <%= node['postgresql']['config']['external_pid_file'] %>
     start program = "/etc/init.d/<%= node['postgresql']['server']['service_name'] %> start"
-    stop  program = "/etc/init.d/<%= node['postgresql']['server']['service_name'] %> stop"
-    restart  program = "/etc/init.d/<%= node['postgresql']['server']['service_name'] %> restart"
+    stop program = "/etc/init.d/<%= node['postgresql']['server']['service_name'] %> stop"
  if failed unixsocket /run/postgresql/.s.PGSQL.5432 protocol pgsql then restart
  if failed unixsocket /run/postgresql/.s.PGSQL.5432 protocol pgsql then alert
  if failed host localhost port 5432 protocol pgsql then restart
